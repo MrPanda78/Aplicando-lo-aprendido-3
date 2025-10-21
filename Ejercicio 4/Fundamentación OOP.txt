@@ -1,0 +1,290 @@
+Análisis de Características de Programación Orientada a Objetos
+Características OOP Implementadas
+1. Encapsulamiento
+El encapsulamiento agrupa datos y métodos relacionados dentro de un mismo objeto, ocultando los detalles de implementación.
+Ejercicio 2 - Calculadora:
+
+function Calculator() {
+    this.result = 0;
+    this.madeFirstOperation = false;
+}
+
+Calculator.prototype.add = function(num1, num2) {
+    if (!this.madeFirstOperation && num2 !== null) {
+        this.result = num1 + num2;
+        this.madeFirstOperation = true;
+    } else {
+        this.result += num1;
+    }
+};
+Fundamentación: Los datos (result, madeFirstOperation) y las operaciones que los manipulan (add, subtract, etc.) están encapsulados dentro del objeto Calculator. El usuario no necesita conocer cómo se almacena internamente el resultado, solo interactúa con métodos públicos.
+Ejercicio 3 - Lista de Tareas:
+
+function GestorTareas() {
+    this.tareas = [];
+    this.errorMessage = "";
+}
+
+GestorTareas.prototype.agregarTarea = function(tarea) {
+    this.tareas.push(tarea);
+    this.ordenarPorTitulo();
+};
+Fundamentación: El array tareas está encapsulado dentro de GestorTareas. Los métodos como agregarTarea() controlan cómo se modifica este array, garantizando que siempre se ordene alfabéticamente después de cada inserción.
+
+2. Abstracción
+La abstracción permite enfocarse en lo esencial, ocultando detalles complejos de implementación.
+Ejercicio 2 - Calculadora:
+
+UI.prototype.showOperationMenu = function(operationName, operation) {
+    this.clearScreen();
+    console.log(`[${operationName} números]\n\n`);
+    
+    try {
+        const num1 = this.getNumberInput(
+            this.calculator.hasOperations() 
+                ? ">> Ingrese un número: " 
+                : ">> Ingrese el primer número: "
+        );
+        
+        const num2 = this.calculator.hasOperations() 
+            ? null 
+            : this.getNumberInput(">> Ingrese el segundo número: ");
+        
+        operation(num1, num2);
+    } catch (error) {
+        this.errorMessage = `\nERROR: ¡${error.message}!\n`;
+    }
+};
+
+Fundamentación: El método showOperationMenu abstrae toda la lógica de mostrar un menú de operación. No importa si es suma, resta, multiplicación o división, el proceso es el mismo. El usuario solo ve un menú simple, mientras que internamente se manejan validaciones, errores y actualizaciones.
+Ejercicio 3 - Lista de Tareas:
+
+Tarea.prototype.getDifficultyStars = function() {
+    switch(Number(this.difficulty)) {
+        case 1: return "★☆☆";
+        case 2: return "★★☆";
+        case 3: return "★★★";
+        default: return "ERROR";
+    }
+};
+
+Tarea.prototype.getStatusText = function() {
+    switch(this.status.toUpperCase()) {
+        case 'P': return "Pendiente";
+        case 'E': return "En curso";
+        case 'T': return "Terminada";
+        case 'C': return "Cancelada";
+        default: return "ERROR";
+    }
+};
+
+Fundamentación: Estos métodos abstraen la conversión de códigos internos ('P', 1) a representaciones legibles ("Pendiente", "★☆☆"). El resto del código no necesita saber cómo se hace esta conversión, solo llama al método.
+
+3. Modularidad y Responsabilidad Única
+Cada objeto/constructor tiene una única responsabilidad bien definida.
+Ejercicio 2 - Calculadora:
+
+// Validator: Solo valida
+class Validator {
+    static isNumber(value) {
+        const num = Number(value);
+        return Number.isInteger(num);
+    }
+}
+
+// Calculator: Solo calcula
+function Calculator() { ... }
+
+// UI: Solo maneja interfaz
+function UI(calculator) { ... }
+Fundamentación:
+
+Validator se encarga únicamente de validar datos
+Calculator solo realiza operaciones matemáticas
+UI solo maneja la interacción con el usuario
+
+Si necesitamos cambiar cómo se muestra el menú, solo modificamos UI. Si cambiamos una operación matemática, solo tocamos Calculator.
+Ejercicio 3 - Lista de Tareas:
+// Tarea: Representa una tarea individual
+function Tarea(title, description, ...) { ... }
+
+// GestorTareas: Administra colección de tareas
+function GestorTareas() { ... }
+
+// Validador: Valida entradas
+function Validador() { ... }
+
+// InterfazUsuario: Maneja interacción
+function InterfazUsuario(gestor, validador) { ... }
+Fundamentación: Cada constructor tiene una responsabilidad clara:
+
+Tarea: Contiene datos y comportamiento de UNA tarea
+GestorTareas: Administra MÚLTIPLES tareas (filtrar, buscar, ordenar)
+Validador: Valida fechas y números
+InterfazUsuario: Maneja menús y entrada del usuario
+
+
+4. Composición
+Un objeto contiene instancias de otros objetos para delegar responsabilidades.
+Ejercicio 2 - Calculadora:
+
+function UI(calculator) {
+    this.calculator = calculator;  // Composición
+    this.errorMessage = "";
+}
+
+UI.prototype.showOperationMenu = function(operationName, operation) {
+    // Usa la calculadora que tiene dentro
+    operation(num1, num2);
+    this.showMainMenu();
+};
+Fundamentación: UI tiene un Calculator. No hereda de Calculator, sino que lo contiene y lo usa. Esto permite cambiar la implementación de Calculator sin afectar a UI.
+Ejercicio 3 - Lista de Tareas:
+
+function InterfazUsuario(gestor, validador) {
+    this.gestor = gestor;      // Composición
+    this.validador = validador; // Composición
+}
+
+InterfazUsuario.prototype.crearNuevaTarea = function() {
+    // Usa el validador
+    if (!this.validador.esFechaValida(expiration)) {
+        // maneja error
+    }
+    
+    // Usa el gestor
+    this.gestor.agregarTarea(nuevaTarea);
+};
+Fundamentación: InterfazUsuario tiene un GestorTareas y tiene un Validador. Delega las responsabilidades de validación y gestión de tareas a los objetos apropiados.
+
+5. Reutilización de Código mediante Prototipos
+Los métodos se definen en el prototipo y son compartidos por todas las instancias.
+Ejercicio 2 - Calculadora:
+
+Calculator.prototype.add = function(num1, num2) { ... };
+Calculator.prototype.subtract = function(num1, num2) { ... };
+
+// Todas las instancias comparten estos métodos
+const calc1 = new Calculator();
+const calc2 = new Calculator();
+// calc1 y calc2 comparten los mismos métodos en memoria
+Fundamentación: En lugar de que cada instancia tenga su propia copia de los métodos, todos comparten los métodos del prototipo. Esto ahorra memoria y permite actualizaciones centralizadas.
+Ejercicio 3 - Lista de Tareas:
+
+Tarea.prototype.mostrarDetalles = function() { ... };
+Tarea.prototype.editar = function() { ... };
+
+// Todas las tareas comparten estos métodos
+const tarea1 = new Tarea(...);
+const tarea2 = new Tarea(...);
+// Ambas usan el mismo código de mostrarDetalles
+
+6. Métodos como Comportamientos
+Los objetos no solo almacenan datos, sino que también tienen comportamientos (métodos).
+Ejercicio 2 - Calculadora:
+
+Calculator.prototype.hasOperations = function() {
+    return this.madeFirstOperation;
+};
+
+Calculator.prototype.getResult = function() {
+    return this.result;
+};
+Fundamentación: En lugar de acceder directamente a calculator.madeFirstOperation, usamos calculator.hasOperations(). Esto permite cambiar la implementación interna sin afectar el código que lo usa.
+Ejercicio 3 - Lista de Tareas:
+
+GestorTareas.prototype.tieneTareas = function() {
+    return this.tareas.length > 0;
+};
+
+GestorTareas.prototype.filtrarPorEstado = function(estado) {
+    if (estado === 'TODAS') return this.tareas;
+    return this.tareas.filter(t => t.status.toUpperCase() === estado);
+};
+Fundamentación: Los objetos "saben hacer cosas". GestorTareas sabe filtrar tareas, no necesitamos escribir esa lógica fuera del objeto.
+
+Características OOP NO Implementadas
+1. Herencia
+¿Qué es? Un objeto "hijo" hereda propiedades y métodos de un objeto "padre".
+¿Por qué no se usó?
+En ambos ejercicios, cada constructor tiene responsabilidades únicas y no comparten funcionalidad suficiente como para justificar herencia.
+Ejemplo de dónde podría usarse:
+En la calculadora, si tuviéramos diferentes tipos de calculadoras:
+// Calculadora base
+function Calculator() {
+    this.result = 0;
+}
+Calculator.prototype.getResult = function() {
+    return this.result;
+};
+
+// Calculadora científica hereda de Calculator
+function ScientificCalculator() {
+    Calculator.call(this);
+}
+ScientificCalculator.prototype = Object.create(Calculator.prototype);
+ScientificCalculator.prototype.constructor = ScientificCalculator;
+
+ScientificCalculator.prototype.sin = function(angle) {
+    this.result = Math.sin(angle);
+};
+Pero en nuestro caso, solo necesitamos un tipo de calculadora, por lo que la herencia sería sobre-ingeniería.
+
+2. Polimorfismo Explícito
+¿Qué es? Diferentes objetos responden al mismo método de maneras distintas.
+¿Se usó implícitamente?
+Sí, de forma sutil:
+// En la calculadora, todas las operaciones se pasan como funciones
+this.showOperationMenu("Sumar", (n1, n2) => this.calculator.add(n1, n2));
+this.showOperationMenu("Restar", (n1, n2) => this.calculator.subtract(n1, n2));
+Todas las operaciones tienen la misma "interfaz" (reciben num1, num2), pero hacen cosas diferentes.
+¿Por qué no es polimorfismo completo?
+No hay diferentes tipos de objetos respondiendo al mismo mensaje. En un caso de polimorfismo real, tendríamos:
+// Diferentes tipos de tareas
+function TareaSimple() {}
+function TareaPrioritaria() {}
+function TareaRecurrente() {}
+
+// Todas responden a mostrar() de forma diferente
+TareaSimple.prototype.mostrar = function() { /* ... */ };
+TareaPrioritaria.prototype.mostrar = function() { /* versión con prioridad */ };
+TareaRecurrente.prototype.mostrar = function() { /* versión con recurrencia */ };
+No fue necesario porque todas nuestras tareas se comportan igual.
+
+3. Propiedades Privadas
+¿Qué son? Datos que solo el objeto puede acceder, no desde fuera.
+¿Por qué no se usó?
+JavaScript con prototipos no tiene propiedades privadas verdaderas (hasta ES6+ con #propiedadPrivada).
+
+En nuestro código, todas las propiedades son públicas:
+const gestor = new GestorTareas();
+console.log(gestor.tareas); // Se puede acceder directamente
+
+¿Cómo podría implementarse?
+Con closures:
+
+function GestorTareas() {
+    let tareas = []; // Variable privada
+    
+    this.agregarTarea = function(tarea) {
+        tareas.push(tarea);
+    };
+    
+    this.obtenerTareas = function() {
+        return [...tareas]; // Retorna copia
+    };
+}
+
+¿Por qué no fue necesario?
+Para estos ejercicios educativos, no hay riesgo de que alguien modifique incorrectamente los datos. En una aplicación real, sí sería recomendable.
+
+Conclusión
+Ambos ejercicios utilizan efectivamente los principios fundamentales de OOP:
+
+Encapsulamiento: Datos y métodos agrupados
+Abstracción: Complejidad oculta tras interfaces simples
+Modularidad: Cada objeto tiene una responsabilidad clara
+Composición: Objetos contienen otros objetos
+Reutilización: Métodos compartidos mediante prototipos
+
+Las características no implementadas (herencia compleja, polimorfismo explícito, propiedades privadas) no fueron necesarias debido a la naturaleza y alcance de los ejercicios. Implementarlas habría agregado complejidad sin beneficios tangibles.
