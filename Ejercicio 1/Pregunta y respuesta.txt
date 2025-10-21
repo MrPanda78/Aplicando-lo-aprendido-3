@@ -1,0 +1,14 @@
+1.	Generalización simbólica: ¿Cuáles son las reglas escritas del lenguaje? 
+Rta: Se refiere a las reglas escritas del lenguaje: la sintaxis, las estructuras permitidas y las restricciones que lo definen formalmente. Ejemplos:
+•	Uso de palabras clave (if, while, class).
+•	Definición estricta de tipos (en Java) o tipado dinámico (en Python).
+•	Reglas de indentación obligatoria (Python).
+•	Reglas de alcance y visibilidad de variables.
+
+
+2.	Creencias de los profesionales: ¿Qué características particulares del lenguaje se cree que sean "mejores" que en otros lenguajes? 
+Rta: Son las opiniones compartidas por la comunidad sobre las ventajas del lenguaje frente a otros. Ejemplos:
+•	En Python: su sintaxis simple y legible lo hace “mejor para aprender y prototipar”.
+•	En Java: su portabilidad (“escribe una vez, corre en cualquier lugar”) lo hace confiable.
+•	En C: el control cercano al hardware lo hace preferido para sistemas embebidos.
+•	En JavaScript: la ubicuidad en la web lo convierte en el lenguaje “imprescindible” para desarrollo frontend.
