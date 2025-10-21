@@ -1,0 +1,24 @@
+{
+  "name": "aplicando-lo-aprendido-3---prueba",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MrPanda78/Aplicando-lo-aprendido-3---Prueba.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MrPanda78/Aplicando-lo-aprendido-3---Prueba/issues"
+  },
+  "homepage": "https://github.com/MrPanda78/Aplicando-lo-aprendido-3---Prueba#readme",
+  "description": "",
+  "dependencies": {
+    "dayjs": "^1.11.18",
+    "prompt-sync": "^4.2.0"
+  }
+}
